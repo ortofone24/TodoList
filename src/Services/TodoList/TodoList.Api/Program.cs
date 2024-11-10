@@ -1,4 +1,5 @@
-using System;
+using System.Reflection;
+using TodoList.Application.Queries;
 using TodoList.Infrastructure;
 using TodoList.Infrastructure.Extensions;
 
@@ -8,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTasksQueryHandler).Assembly));
+//builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("TodoList.Application")));
+
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
