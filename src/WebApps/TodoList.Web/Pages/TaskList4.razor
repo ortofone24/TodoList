@@ -1,13 +1,12 @@
-﻿@page "/tasks3"
+﻿@page "/tasks4"
 @using TodoList.Web.Models
 @using TodoList.Web.Services
-@using TodoList.Web.Shared
+
+
 @inject ITaskService TaskService
 @inject NavigationManager NavigationManager
 
-<h3>Lista zadań na @SelectedDate.ToShortDateString()</h3>
-
-<DatePicker InitialDate="DefaultDate" DateSelected="OnDateSelected"></DatePicker>
+<h1>Wszystkie Zadania (Strona @currentPage z @totalPages)</h1>
 
 @if (tasks == null)
 {
@@ -15,7 +14,7 @@
 }
 else if (tasks.Count == 0)
 {
-    <p>Brak zadań na wybrany dzień.</p>
+    <p>Brak zadań do wyświetlenia.</p>
 }
 else
 {
@@ -44,30 +43,51 @@ else
             }
         </tbody>
     </table>
-}
 
-<button class="btn btn-success" @onclick="CreateTask">Dodaj zadanie</button>
+    <div class="pagination">
+        <button class="btn btn-secondary me-2" @onclick="PreviousPage" disabled="@(currentPage == 1)">Poprzednia</button>
+        <span>Strona @currentPage z @totalPages</span>
+        <button class="btn btn-secondary ms-2 me-3" @onclick="NextPage" disabled="@(currentPage == totalPages)">Następna</button>
+        <button class="btn btn-success" @onclick="CreateTask">Dodaj zadanie</button>
+    </div>
+
+    
+}
 
 @code {
     private List<TaskItem> tasks;
-    private DateTime DefaultDate = DateTime.Today;
-
-    private DateTime SelectedDate { get; set; } = DateTime.Today;
-
-    public async Task OnDateSelected(DateTime dateTime)
-    {
-        SelectedDate = dateTime;
-        await LoadTasks(SelectedDate);
-    }
+    private int currentPage = 1;
+    private int pageSize = 5;
+    private int totalPages;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadTasks(DefaultDate);
+        await LoadTasks();
     }
 
-    private async Task LoadTasks(DateTime dateTime)
+    private async Task LoadTasks()
     {
-        tasks = (await TaskService.GetTasksByDate(dateTime)).ToList();
+        var result = await TaskService.GetTaskItemsPagination(currentPage, pageSize);
+        tasks = result.Items;
+        totalPages = result.TotalPages;
+    }
+
+    private async Task NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+            await LoadTasks();
+        }
+    }
+
+    private async Task PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            await LoadTasks();
+        }
     }
 
     private void EditTask(Guid id)
@@ -83,7 +103,7 @@ else
     private async Task DeleteTask(Guid id)
     {
         await TaskService.DeleteTask(id);
-        await LoadTasks(DefaultDate);
+        await LoadTasks();
     }
 
     private void ViewDetails(Guid id)

@@ -15,6 +15,14 @@ namespace TodoList.Api.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("pagination")]
+        public async Task<ActionResult<PaginatedResult<TaskItem>>> GetTaskItemsPagination([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var query = new GetAllTasksQueryPagination { PageNumber = pageNumber, PageSize = pageSize };
+            var paginatedTasks = await _mediator.Send(query);
+            return Ok(paginatedTasks);
+        }
+
         // GET: api/Task/all
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTaskItems()

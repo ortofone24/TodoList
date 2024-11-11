@@ -12,6 +12,12 @@ namespace TodoList.Web.Services
             _httpClient = httpClient;
         }
 
+        public async Task<PaginatedResult<TaskItem>> GetTaskItemsPagination(int pageNumber = 1, int pageSize = 10)
+        {
+            var response = await _httpClient.GetFromJsonAsync<PaginatedResult<TaskItem>>($"api/Task/pagination?pageNumber={pageNumber}&pageSize={pageSize}");
+            return response;
+        }
+
         public async Task<Guid> CreateTask(CreateTaskCommand command)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Task", command);
