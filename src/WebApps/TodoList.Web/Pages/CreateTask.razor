@@ -7,15 +7,11 @@
 <h3>Dodaj Nowe Zadanie</h3>
 
 <EditForm Model="createTaskModel" OnValidSubmit="HandleValidSubmit">
-
-
-
     <div class="form-group">
         <label for="title">Tytuł</label>
         <InputText id="title" @bind-Value="createTaskModel.Title" class="form-control" />
         <ValidationMessage For="@(() => createTaskModel.Title)" />
     </div>
-
     <div class="form-group">
         <label for="dueDate">Termin</label>
         <InputDate id="dueDate" @bind-Value="createTaskModel.DueDate" class="form-control" />
@@ -25,8 +21,6 @@
         <button type="submit" class="btn btn-primary">Dodaj Zadanie</button>
         <button type="button" class="btn btn-secondary" @onclick="Cancel">Anuluj</button>
     </div>
-
-
 </EditForm>
 
 @if (isLoading)
@@ -67,17 +61,16 @@
 
         try
         {
-            await TaskService.CreateTask(createTaskModel);
+            var taskId = await TaskService.CreateTask(createTaskModel);
             successMessage = true;
 
-            // Opcjonalnie: Przejdź do strony szczegółów nowo utworzonego zadania
-            // NavigationManager.NavigateTo($"/tasks/details/{taskId}");
+            NavigationManager.NavigateTo($"/tasks/details/{taskId}");
 
             // Resetowanie formularza
             createTaskModel = new CreateTaskCommand
-                {
-                    DueDate = DateTime.Today
-                };
+            {
+                DueDate = DateTime.Today
+            };
         }
         catch (Exception ex)
         {

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TodoList.Application.Commands;
+using TodoList.Application.Dtos;
 using TodoList.Application.Queries;
 using TodoList.Domain.Models;
 
@@ -57,10 +58,10 @@ namespace TodoList.Api.Controllers
 
         // POST: api/Task
         [HttpPost]
-        public async Task<ActionResult<Guid>> PostTaskItem([FromBody] CreateTaskCommand command)
+        public async Task<CreateTaskResponse> PostTaskItem([FromBody] CreateTaskCommand command)
         {
             var taskId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetTaskItem), new { id = taskId }, null);
+            return new CreateTaskResponse { Id = taskId };
         }
 
         // PUT: api/Task/{id}
@@ -68,7 +69,7 @@ namespace TodoList.Api.Controllers
         public async Task<IActionResult> PutTaskItem(Guid id, [FromBody] UpdateTaskCommand command)
         {
 
-            //TODO zrobic jak AR FORCE
+            //TODO 
             if (id != command.Id)
             {
                 return BadRequest();

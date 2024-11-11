@@ -23,7 +23,7 @@
             notifications.Add(notification);
             InvokeAsync(StateHasChanged);
 
-            // Automatyczne zamknięcie powiadomienia po 10 sekundach
+            // Automatyczne zamknięcie powiadomienia po 20 sekundach
             _ = Task.Run(async () =>
             {
                 await Task.Delay(TimeSpan.FromSeconds(20));

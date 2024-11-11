@@ -15,7 +15,7 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddSingleton<HubConnection>(sp =>
 {
     return new HubConnectionBuilder()
-        .WithUrl(new Uri("https://localhost:7034/notificationHub")) // Upewnij siê, ¿e adres jest poprawny
+        .WithUrl(new Uri("https://localhost:7034/notificationHub")) 
         .WithAutomaticReconnect()
         .Build();
 });

@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using TodoList.Application.Dtos;
 using TodoList.Web.Models;
 
 namespace TodoList.Web.Services
@@ -18,11 +19,20 @@ namespace TodoList.Web.Services
             return response;
         }
  
-        public async Task CreateTask(CreateTaskCommand command)
+        public async Task<Guid> CreateTask(CreateTaskCommand command)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Task", command);
-            response.EnsureSuccessStatusCode();
 
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<CreateTaskResponse>();
+                return result.Id;
+            }
+            else
+            {
+                response.EnsureSuccessStatusCode();
+                return Guid.Empty; 
+            }
         }
 
         public async Task DeleteTask(Guid id)

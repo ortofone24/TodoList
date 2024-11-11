@@ -56,9 +56,7 @@ else
             Zadanie zostało zaktualizowane pomyślnie!
         </div>
     }
-
 }
-
 
 @code {
     [Parameter]
@@ -90,7 +88,7 @@ else
             if (taskModel == null)
             {
                 // Jeśli zadanie nie istnieje, przekieruj użytkownika
-                NavigationManager.NavigateTo("/tasks");
+                NavigationManager.NavigateTo("/tasksAll");
             }
         }
         catch (Exception ex)
@@ -111,7 +109,7 @@ else
             successMessage = true;
 
             // Opcjonalnie: Przekieruj użytkownika po sukcesie
-            // NavigationManager.NavigateTo("/tasks");
+            NavigationManager.NavigateTo("/tasksAll");
         }
         catch (Exception ex)
         {
