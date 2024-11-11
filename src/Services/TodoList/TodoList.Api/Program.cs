@@ -1,9 +1,12 @@
-using System.Reflection;
+using FluentValidation;
+using MediatR;
 using TodoList.Api.Hubs;
 using TodoList.Api.Services;
+using TodoList.Application.Behaviors;
 using TodoList.Application.Queries;
 using TodoList.Infrastructure;
 using TodoList.Infrastructure.Extensions;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,9 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTasksQueryHandler).Assembly));
 //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("TodoList.Application")));
+var applicationAssembly = typeof(TodoList.Application.AssemblyReference).Assembly;
+builder.Services.AddValidatorsFromAssembly(applicationAssembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 
 builder.Services.AddSwaggerGen();
