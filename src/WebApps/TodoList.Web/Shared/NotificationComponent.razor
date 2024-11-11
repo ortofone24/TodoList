@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject HubConnection HubConnection
+
+
+<div class="notifications-container">
+    @foreach (var notification in notifications.ToList())
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>@notification.Title</strong> - Zbliża się termin realizacji zadania: @notification.DueDate.ToString("yyyy-MM-dd HH:mm")
+            <button type="button" class="btn-close" aria-label="Close" @onclick="() => RemoveNotification(notification)"></button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<NotificationModel> notifications = new List<NotificationModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Subskrypcja na odbiór powiadomień
+        HubConnection.On<NotificationModel>("ReceiveNotification", (notification) =>
+        {
+            notifications.Add(notification);
+            InvokeAsync(StateHasChanged);
+
+            // Automatyczne zamknięcie powiadomienia po 10 sekundach
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(20));
+                await InvokeAsync(() => RemoveNotification(notification));
+            });
+        });
+
+        await HubConnection.StartAsync();
+    }
+
+    private void RemoveNotification(NotificationModel notification)
+    {
+        notifications.Remove(notification);
+        StateHasChanged();
+    }
+
+    public class NotificationModel
+    {
+        public Guid TaskId { get; set; }
+        public string Title { get; set; }
+        public DateTime DueDate { get; set; }
+    }
+
+}
