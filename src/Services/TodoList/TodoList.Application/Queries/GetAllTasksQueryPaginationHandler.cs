@@ -16,8 +16,13 @@ namespace TodoList.Application.Queries
 
         public async Task<PaginatedResult<TaskItem>> Handle(GetAllTasksQueryPagination request, CancellationToken cancellationToken)
         {
-            var totalCount = await _context.TaskItems.CountAsync(cancellationToken);
-            var tasks = await _context.TaskItems
+            var query = _context.TaskItems.AsQueryable();
+
+            query = query.OrderBy(t => t.DueDate);
+
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            var tasks = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
