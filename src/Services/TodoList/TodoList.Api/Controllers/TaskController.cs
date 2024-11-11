@@ -1,10 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TodoList.Application.Commands;
 using TodoList.Application.Queries;
 using TodoList.Domain.Models;
-using TodoList.Infrastructure.Data;
 
 namespace TodoList.Api.Controllers
 {
@@ -62,7 +60,7 @@ namespace TodoList.Api.Controllers
         public async Task<IActionResult> PutTaskItem(Guid id, [FromBody] UpdateTaskCommand command)
         {
 
-            //TODO przemyslec
+            //TODO zrobic jak AR FORCE
             if (id != command.Id)
             {
                 return BadRequest();

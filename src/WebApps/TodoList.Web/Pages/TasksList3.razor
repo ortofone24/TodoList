@@ -1,0 +1,93 @@
+﻿@page "/tasks3"
+@using TodoList.Web.Models
+@using TodoList.Web.Services
+@using TodoList.Web.Shared
+@inject ITaskService TaskService
+@inject NavigationManager NavigationManager
+
+<h3>Lista zadań na @SelectedDate.ToShortDateString()</h3>
+
+<DatePicker InitialDate="DefaultDate" DateSelected="OnDateSelected"></DatePicker>
+
+@if (tasks == null)
+{
+    <p>Ładowanie...</p>
+}
+else if (tasks.Count == 0)
+{
+    <p>Brak zadań na wybrany dzień.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tytuł</th>
+                <th>Termin</th>
+                <th>Status</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in tasks)
+            {
+                <tr>
+                    <td>@task.Title</td>
+                    <td>@task.DueDate.ToShortDateString()</td>
+                    <td>@(task.IsCompleted ? "Ukończone" : "Nieukończone")</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => EditTask(task.Id)">Edytuj</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteTask(task.Id)">Usuń</button>
+                        <button class="btn btn-info" @onclick="() => ViewDetails(task.Id)">Szczegóły</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-success" @onclick="CreateTask">Dodaj zadanie</button>
+
+@code {
+    private List<TaskItem> tasks;
+    private DateTime DefaultDate = DateTime.Today;
+
+    private DateTime SelectedDate { get; set; }
+
+    public async Task OnDateSelected(DateTime dateTime)
+    {
+        SelectedDate = dateTime;
+        await LoadTasks(SelectedDate);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTasks(DefaultDate);
+    }
+
+    private async Task LoadTasks(DateTime dateTime)
+    {
+        tasks = (await TaskService.GetTasksByDate(dateTime)).ToList();
+    }
+
+    private void EditTask(Guid id)
+    {
+        NavigationManager.NavigateTo($"/tasks/edit/{id}");
+    }
+
+    private void CreateTask()
+    {
+        NavigationManager.NavigateTo("/tasks/create");
+    }
+
+    private async Task DeleteTask(Guid id)
+    {
+        await TaskService.DeleteTask(id);
+        await LoadTasks(DefaultDate);
+    }
+
+    private void ViewDetails(Guid id)
+    {
+        NavigationManager.NavigateTo($"/tasks/details/{id}");
+    }
+}

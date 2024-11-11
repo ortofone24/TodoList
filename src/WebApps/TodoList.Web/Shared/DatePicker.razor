@@ -1,0 +1,76 @@
+<div class="row">
+    <div class="col-md-6">
+        <table>
+            <tr>
+                <td>
+                    <select class="form-control" @bind="Day">
+                        @for (int i = 1; i <= 31; i++)
+                        {
+                            <option>@i</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" @bind="Month">
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i">@Months[i - 1]</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" @bind="Year">
+                        @for (int i = DateTime.Now.Year - 50; i <= DateTime.Now.Year + 5; i++)
+                        {
+                            <option>@i</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-info" @onclick="OnSelectedClick">Wybierz date</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+@code {
+    public int Day { get; set; }
+    public int Month { get; set; }
+    public int Year { get; set; }
+
+    public string[] Months { get; set; } =
+    {
+        "Styczeñ",
+        "Luty",
+        "Marzec",
+        "Kwiecieñ",
+        "Maj",
+        "Czerwiec",
+        "Lipiec",
+        "Sierpieñ",
+        "Wrzesieñ",
+        "PaŸdziernik",
+        "Listopad",
+        "Grudzieñ"
+    };
+
+    [Parameter]
+    public DateTime InitialDate { get; set; }
+
+    [Parameter]
+    public EventCallback<DateTime> DateSelected{ get; set; }
+
+    protected override void OnInitialized()
+    {
+        Day = InitialDate.Day;
+        Month = InitialDate.Month;
+        Year = InitialDate.Year;
+    }
+
+    public Task OnSelectedClick()
+    {
+        DateTime dateTime = new DateTime(Year, Month,Day);
+        return DateSelected.InvokeAsync(dateTime);
+    }
+}
