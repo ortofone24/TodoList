@@ -23,6 +23,17 @@ namespace TodoList.Infrastructure.Extensions
                     });
                 }
 
+                for (int i = 9; i < 13; i++)
+                {
+                    taskItems.Add(new TaskItem
+                    {
+                        Id = Guid.NewGuid(),
+                        Title = $"Zadanie {i + 1}",
+                        DueDate = DateTime.Now.AddDays(1),
+                        IsCompleted = false
+                    });
+                }
+
                 context.TaskItems.AddRange(taskItems);
                 context.SaveChanges();
             }

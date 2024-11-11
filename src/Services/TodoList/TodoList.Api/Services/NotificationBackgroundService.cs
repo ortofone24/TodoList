@@ -23,8 +23,7 @@ namespace TodoList.Api.Services
             {
                 await CheckAndSendNotifications(stoppingToken);
 
-                // Czekaj przez określony czas przed kolejnym sprawdzeniem
-                //await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                // Wait for a certain period of time before checking again
                 await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
         }
@@ -35,14 +34,14 @@ namespace TodoList.Api.Services
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                // Znajdź zadania, które są do wykonania w ciągu najbliższych 24 godzin
+                // Find tasks that need to be done in the next 48 hours
                 var upcomingTasks = await context.TaskItems
                     .Where(t => !t.IsCompleted && t.DueDate <= DateTime.UtcNow.AddHours(48) && t.DueDate > DateTime.UtcNow)
                     .ToListAsync(cancellationToken);
 
                 foreach (var task in upcomingTasks)
                 {
-                    // Wysyłanie powiadomienia do wszystkich podłączonych klientów
+                    // Sending notification to all connected clients
                     await _hubContext.Clients.All.SendAsync("ReceiveNotification", new
                     {
                         TaskId = task.Id,
