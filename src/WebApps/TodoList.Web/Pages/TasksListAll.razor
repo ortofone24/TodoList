@@ -1,10 +1,10 @@
-﻿@page "/tasks2"
+﻿@page "/tasksAll"
 @using TodoList.Web.Models
 @using TodoList.Web.Services
-@using TodoList.Web.Shared
 @inject ITaskService TaskService
 @inject NavigationManager NavigationManager
 
+<h3>Wszystkie Zadania (Strona @currentPage z @totalPages)</h3>
 
 @if (tasks == null)
 {
@@ -12,7 +12,7 @@
 }
 else if (tasks.Count == 0)
 {
-    <p>Brak zadań na wybrany dzień.</p>
+    <p>Brak zadań do wyświetlenia.</p>
 }
 else
 {
@@ -41,13 +41,22 @@ else
             }
         </tbody>
     </table>
-}
 
-<button class="btn btn-success" @onclick="CreateTask">Dodaj zadanie</button>
+    <div class="pagination">
+        <button class="btn btn-secondary me-2" @onclick="PreviousPage" disabled="@(currentPage == 1)">Poprzednia</button>
+        <span>Strona @currentPage z @totalPages</span>
+        <button class="btn btn-secondary ms-2 me-3" @onclick="NextPage" disabled="@(currentPage == totalPages)">Następna</button>
+        <button class="btn btn-success" @onclick="CreateTask">Dodaj zadanie</button>
+    </div>
+
+    
+}
 
 @code {
     private List<TaskItem> tasks;
-    //private DateTime SelectedDate = DateTime.Today;
+    private int currentPage = 1;
+    private int pageSize = 5;
+    private int totalPages;
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,8 +65,27 @@ else
 
     private async Task LoadTasks()
     {
-        //tasks = (await TaskService.GetTasksByDate(SelectedDate)).ToList();
-        tasks = (await TaskService.GetAllTasks()).ToList();
+        var result = await TaskService.GetTaskItemsPagination(currentPage, pageSize);
+        tasks = result.Items;
+        totalPages = result.TotalPages;
+    }
+
+    private async Task NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+            await LoadTasks();
+        }
+    }
+
+    private async Task PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            await LoadTasks();
+        }
     }
 
     private void EditTask(Guid id)

@@ -3,7 +3,7 @@
         <table>
             <tr>
                 <td>
-                    <select class="form-control" @bind="Day">
+                    <select class="form-control border-primary shadow-sm" @bind="Day">
                         @for (int i = 1; i <= 31; i++)
                         {
                             <option>@i</option>
@@ -11,7 +11,7 @@
                     </select>
                 </td>
                 <td>
-                    <select class="form-control" @bind="Month">
+                    <select class="form-control border-primary shadow-sm" @bind="Month">
                         @for (int i = 1; i <= 12; i++)
                         {
                             <option value="@i">@Months[i - 1]</option>
@@ -19,15 +19,15 @@
                     </select>
                 </td>
                 <td>
-                    <select class="form-control" @bind="Year">
-                        @for (int i = DateTime.Now.Year - 50; i <= DateTime.Now.Year + 5; i++)
+                    <select class="form-control border-primary shadow-sm" @bind="Year">
+                        @for (int i = DateTime.Now.Year - 50; i <= DateTime.Now.Year + 20; i++)
                         {
                             <option>@i</option>
                         }
                     </select>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-info" @onclick="OnSelectedClick">Wybierz date</button>
+                    <button class="btn btn-info" @onclick="OnSelectedClick">Wybierz date</button>
                 </td>
             </tr>
         </table>

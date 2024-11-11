@@ -6,7 +6,7 @@
     @foreach (var notification in notifications.ToList())
     {
         <div class="alert alert-info alert-dismissible fade show" role="alert">
-            <strong>@notification.Title</strong> - Zbliża się termin realizacji zadania: @notification.DueDate.ToString("yyyy-MM-dd HH:mm")
+            <strong>@notification.Title</strong> - Zbliża się termin realizacji zadania: @notification.DueDate.ToString("yyyy-MM-dd")
             <button type="button" class="btn-close" aria-label="Close" @onclick="() => RemoveNotification(notification)"></button>
         </div>
     }
