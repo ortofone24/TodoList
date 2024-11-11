@@ -17,13 +17,12 @@ namespace TodoList.Web.Services
             var response = await _httpClient.GetFromJsonAsync<PaginatedResult<TaskItem>>($"api/Task/pagination?pageNumber={pageNumber}&pageSize={pageSize}");
             return response;
         }
-
-        public async Task<Guid> CreateTask(CreateTaskCommand command)
+ 
+        public async Task CreateTask(CreateTaskCommand command)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Task", command);
             response.EnsureSuccessStatusCode();
-            var taskId = await response.Content.ReadFromJsonAsync<Guid>();
-            return taskId;
+
         }
 
         public async Task DeleteTask(Guid id)

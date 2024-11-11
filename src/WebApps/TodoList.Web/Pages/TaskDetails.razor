@@ -1,0 +1,44 @@
+﻿@page "/tasks/details/{Id:guid}"
+@using TodoList.Web.Models
+@using TodoList.Web.Services
+@inject ITaskService TaskService
+@inject NavigationManager NavigationManager
+
+<h3>Szczegóły zadania</h3>
+
+@if (task == null)
+{
+    <p>Ładowanie...</p>
+}
+else
+{
+    <div>
+        <p><strong>Tytuł:</strong> @task.Title</p>
+        <p><strong>Termin:</strong> @task.DueDate.ToShortDateString()</p>
+        <p><strong>Status:</strong> @(task.IsCompleted ? "Ukończone" : "Nieukończone")</p>
+    </div>
+    <button class="btn btn-primary" @onclick="() => EditTask(task.Id)">Edytuj</button>
+    <button class="btn btn-secondary" @onclick="GoBack">Powrót</button>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private TaskItem task;
+
+    protected override async Task OnInitializedAsync()
+    {
+        task = await TaskService.GetTaskById(Id);
+    }
+
+    private void EditTask(Guid id)
+    {
+        NavigationManager.NavigateTo($"/tasks/edit/{id}");
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/tasks");
+    }
+}

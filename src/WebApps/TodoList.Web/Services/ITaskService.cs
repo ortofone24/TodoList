@@ -8,7 +8,7 @@ namespace TodoList.Web.Services
         Task<IEnumerable<TaskItem>> GetAllTasks(); 
         Task<IEnumerable<TaskItem>> GetTasksByDate(DateTime date);
         Task<TaskItem> GetTaskById(Guid id);
-        Task<Guid> CreateTask(CreateTaskCommand command);
+        Task CreateTask(CreateTaskCommand command);
         Task UpdateTask(UpdateTaskCommand command);
         Task DeleteTask(Guid id);
     }
