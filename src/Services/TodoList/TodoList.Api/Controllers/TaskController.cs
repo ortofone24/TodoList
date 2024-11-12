@@ -68,8 +68,6 @@ namespace TodoList.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTaskItem(Guid id, [FromBody] UpdateTaskCommand command)
         {
-
-            //TODO 
             if (id != command.Id)
             {
                 return BadRequest();
